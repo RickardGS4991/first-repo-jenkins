@@ -60,12 +60,80 @@ En este punto, jenkins nos dirá que la instalación está completa como nos mue
 
 Pipeline 💻
 
-Jenkins nos mostrará la página inicial en dónde podremos crear cada tarea o configurarlo como se muestra en la siguiente imagen:
+Jenkins nos mostrará la página inicial, donde podremos crear cada tarea o configurarlo, como se muestra en la siguiente imagen:
 
 [inicial]
 
-Seleccionarás la opción "Create a Job", y mostrará una ventana con diferentes opciones. Seleccionarás la opción "Crear un proyecto de estilo libre", y escribirás un nombre en el campo "Enter an item name". Darás clic al boton ok.
+Seleccionaremos la opción “Create a Job”, y se mostrará una ventana con diferentes opciones. Aquí seleccionaremos “Crear un proyecto de estilo libre” y escribiremos un nombre en el campo “Enter an item name”. Finalmente, damos clic en el botón OK.
 
 [estilo]
 
+⸻
+
+Una vez que aceptemos el nombre y la opción, se mostrará la página con la configuración de ese Job. Seleccionamos la pestaña “General”, donde podemos escribir la descripción del pipeline.
+
+Sin embargo, lo más importante aquí es configurar el origen del código. De manera predefinida, esta opción se encontrará en “Ninguno”, pero es necesario seleccionar la opción “Git”, como se muestra en la siguiente imagen:
+
+[git-seleccion]
+
+⸻
+
+Al seleccionar Git, se mostrará un formulario que debemos rellenar:
+	•	En “Repository URL”, escribiremos la URL del repositorio que contiene el proyecto.
+	•	En “Credentials”, debemos agregar los permisos necesarios para acceder a dicho repositorio.
+
+En el botón “Add”, seleccionaremos la opción “Jenkins”. Aquí configuraremos el acceso al repositorio para que Jenkins pueda descargar el código y generar el artifact a través de la build.
+
+Para esto, es necesario generar un token en la cuenta de GitHub.
+
+⸻
+
+Generación del token en GitHub
+
+Seleccionamos la opción “Settings” desde la cuenta personal (no desde la sección del repositorio). Dentro de Settings, seleccionamos “Developer Settings”, que se encuentra al final del menú. Una vez dentro, seleccionamos “Tokens (classic)” y generamos un nuevo token.
+
+[github - developer setting]
+
+⸻
+
+Configuración de credenciales en Jenkins
+
+Con el token generado, regresamos a la página de Jenkins para configurar las credenciales del repositorio:
+	•	En el campo “Username”, agregamos el nombre de usuario de nuestro perfil de GitHub.
+	•	En el campo “Password”, pegamos el token que generamos anteriormente en GitHub.
+	•	Finalmente, agregamos un identificador en el campo “ID”.
+
+Tal como se muestra en la siguiente imagen:
+
+[jenkins-git-repo]
+
+⸻
+
+Configuración del Build
+
+En la sección “Build Steps”, añadimos un nuevo paso y seleccionamos la opción “Ejecutar tareas Maven de nivel superior”.
+
+En el campo “Goals”, escribimos:
+
+clean install
+
+Finalmente, damos clic en “Apply” y después en “Save” para guardar la configuración del Job. Finalmente, tendremos una serie de opciones del lado izquierdo. Seleccionarás la opción "Construir ahora", y esperarás unos minutos hasta que termine el proceso de build justo como se muestra abajo.
+
+[build-process]
+
+Configuración Webhook 📲
+
+Jenkins necesita saber cuando un desarrollador haga un cambio en el repositorio. Por lo tanto, dado que trabajas de manera local en este proyecto, necesitarás descargar Ngrok. En la siguiente liga encontrarás cómo instalarlo. https://youtu.be/iAgJ6eCgUIA?si=M5sKyC-6wOUyOhRo Básicamente, necesitas Ngrok porque GitHub necesita una URL para enviar el webhook, y avisarle a Jenkins sobre los nuevos cambios. Como no puedes usar localhost:8080, es necesario usar una URL válida. Ngrok ofrece esta URL usando su servicio como "tunel". Tienes tu computadora (la cual tiene una URL inválida http), y necesitas indicar que el puerto 8080 será el que se comunique con el exterior para recibir el mensaje.
+
+Una vez configurado Ngrok (o la herramienta para crear tuneles de tu preferencia), es necesario configurar el webhook. Dentro de tu repositorio, seleccionaras "Settings". Del lado izquierdo, le darás clic a la opción "webhook". En el campo "Payload URL" agregarás la URL que Ngrok te da. Sin embargo, es necesario agregar "/github-webhook/", ya que es el oficial dentro de Jenkins. Los demás campos los dejaras por defecto. Finalmente, en la parte final encontrarás la opción "Which events would you like to trigger this webhook?". Aquí seleccionarás la opción "just the push event". 
+
+[webhook]
+
+En Jenkins, abrirás la ventana de "Configuración" o "Administrar Jenkins", y seleccionarás la opción "System - Configurar variables globales y rutas". Buscarás la opción "Github", ya que aquí agregarás el server. Agregarás tu server personal; por lo tanto, seleccionarás el botón "Add Github server". En el campo "Name" puedes escribir un nombre personal o relacionado al proyecto. El campo "API URL" lo dejarás igual, pero en el campo "Credentials" seleccionarás el botón "Add". Seleccionarás la opción "Jenkins", y se te abrirá la ventana "Jenkins Credentials Provider: Jenkins". En el campo "Kind", seleccionarás la opción "Secret Text". Finalmente, en el campo "Secret" escribirás el token que previamente habías configurado en GitHub.
+
+[window-jenkins-add]
+
+Crearás otro pipeline con la misma configuración anterior. Seleccionarás la opción "GitHub project", y en el campo "Project url" escribirás la URL del repositorio que quieres probar. En la opción "Configurar el origen del código fuente", seleccionarás "Git". En el campo "Repository URL" pegarás otra vez la URL anterior, y en "Credentials" seleccionarás las credenciales que previamente ya habíamos configurado. En la sección "Branches to build", escribirás el término común en el nombre de tus ramas. Comúnmente, las ramas llevan "origin/feature/nombreDeTuEleccion", o "origin/fix/nombreDeTuEleccion". Por lo tanto, puedes escribirlas como "origin/feature/**" o "origin/fix/**". De esa forma, estaría detectando todas esas ramas con ese prefijo. Después, seleccionarás la opción "GitHub hook trigger for GITScm polling" de la sección "Triggers". Finalmente, volverás a seleccionar en la sección "Build Steps" la opción "Ejecutar tareas Maven de nivel superior", y escribirás en Goles "Install clean".
+
+[branches]
 
