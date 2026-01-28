@@ -58,7 +58,7 @@ En este punto, jenkins nos dirá que la instalación está completa como nos mue
 
 [ready]
 
-Pipeline 💻
+Pipeline 🔁
 
 Jenkins nos mostrará la página inicial, donde podremos crear cada tarea o configurarlo, como se muestra en la siguiente imagen:
 
@@ -137,3 +137,13 @@ Crearás otro pipeline con la misma configuración anterior. Seleccionarás la o
 
 [branches]
 
+Si has hecho todo lo que se ha mencionado, puedes intentar realizar un push desde tu repo local. Cuando ejecutes el 
+```bash
+git add .
+git commit -m "message"
+git push -u origin nameOfYourBrand
+```
+
+Recibirás una petición que podrás visualizar en la terminal donde tengas abierto tu ngrok. Además de eso, en Jenkins es posible visualizar si la build se ejecutó correctamente. 
+
+[webhook-success]
